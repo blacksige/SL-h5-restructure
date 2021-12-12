@@ -6,18 +6,99 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <script type="text/javascript" src="./sdk/anychatsdk.js"></script>
+    <script type="text/javascript" src="./sdk/anychat4html5.js"></script>
+    <script type="text/javascript" src="./sdk/anychatobject.js"></script>
+    <script type="text/javascript" src="./sdk/anychatbase64.js"></script>
+    <script type="text/javascript" src="./sdk/anychath5sdk.js"></script>
+    <style>
+      html,body{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+      }
+      #loading{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 2000;
+        background-color: rgba(0, 0, 0, 0.8);
+        margin: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transition: opacity .3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #loading>.text{
+        color: #409EFF;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      .box {
+        height: 128px;
+        width: 128px;
+        background: transparent;
+        
+      }
+      .box .circle {
+        stroke-width: 2;
+        stroke: #409eff;
+        stroke-linecap: round;
+      }
+      /* 旋转动画 */
+      @keyframes rotate {
+          to {
+              transform: rotate(1turn)
+          }
+      }
+      /* 弧线动画 */
+      /* 125 是圆的周长 */
+      @keyframes circle {
+          0% {
+      /* 状态1: 点 */
+              stroke-dasharray: 1 125;
+              stroke-dashoffset: 0;
+          }
+          50% {
+      /* 状态2: 圆 */
+              stroke-dasharray: 120, 125;
+              stroke-dashoffset: 0;
+          }
+          to {
+      /* 状态3: 点（向旋转的方向收缩） */
+              stroke-dasharray: 120 125;
+              stroke-dashoffset: -125px;
+          }
+      }
+      .box {
+        /* ...同上 */
+        animation: rotate 2s linear infinite;
+      }
+      .circle {
+        /* ...同上 */
+        animation: circle 2s infinite;
+      }
+    </style>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
+    <div id="app">
+      <div id="loading">
+        <svg viewBox="25 25 50 50" class="box">
+          <circle cx="50" cy="50" r="20" fill="none" class="circle"></circle>
+        </svg>
+        <div class="text">正在初始化</div>
+      </div>
+    </div>
     <!-- built files will be auto injected -->
+   
   </body>
-  <script type="text/javascript" src="./sdk plng/sdk/anychat4html5.js"></script>
-  <script type="text/javascript" src="./sdk plng/sdk/anychatsdk.js"></script>
-  <script type="text/javascript" src="./sdk plng/sdk/anychatevent.js"></script>
-  <script type="text/javascript" src="./sdk plng/sdk/anychatobject.js"></script>
-  <script type="text/javascript" src="./sdk plng/sdk/anychatbase64.js"></script>
-  <script type="text/javascript" src="./sdk plng/sdk/anychath5sdk.js"></script>
 </html>

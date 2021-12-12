@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>前置输入页面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- import stylesheet -->
+  <link rel="stylesheet" href="https://unpkg.com/iview@3.5.4/dist/styles/iview.css">
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+    * {
+      padding: 0px;
+      margin: 0px;
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      /* color: #666;   */
+    }
+    html,body{
+        width: 100%;
+    }
+    #preset{
+        width: 100%;
+        margin: 0 auto;
+    }
+    .title {
+        width: 100%;
+        height: 40px;
+        background-color: #DEDEDE;
+        text-align: center;
+        line-height: 40px;
+    }
+	.form{
+		margin: 0 5%;
+	}
+
+  </style>
+</head>
+
+<body>
+    <div id="preset">
+		<i-form v-if='created'>
+			<template>
+				<h4 class="title">输入配置信息</h4>
+				<div class="form">
+					<form-item label="appId :"><i-input v-model="presetData.config.appId" placeholder="请输入应用ID"></i-input></form-item>
+					<form-item label="服务器IP :"><i-input v-model="presetData.config.serverIp" placeholder="请输入服务器地址"></i-input></form-item>
+					<form-item label="服务器端口 :"><i-input v-model.number="presetData.config.serverPort" placeholder="请输入服务器端口"></i-input></form-item>
+					<form-item label="营业厅ID :"><i-input v-model.number="presetData.config.areaId" placeholder="请输入营业厅ID"></i-input></form-item>
+					<form-item label="队列ID :"><i-input v-model.number="presetData.config.queneId" placeholder="请输入队列ID"></i-input></form-item>
+          <form-item label="房间号 :" v-if="presetData.businessInfo.isInvite == '1'"><i-input v-model.number="presetData.config.roomId" placeholder="请输入房间号"></i-input></form-item>
+				</div>
+			</template>
+			<template>
+				<h4 class="title">输入用户信息</h4>
+				<div class="form">
+					<form-item label="用户名 :"><i-input v-model="presetData.userInfo.name" placeholder="请输入用户名"></i-input></form-item>
+					<form-item label="身份证ID :"><i-input v-model.number="presetData.userInfo.userId" placeholder="请输入身份证ID"></i-input></form-item>
+					<form-item label="性别 :">
+						<Radio-group v-model="presetData.userInfo.sex">
+							<Radio label="male">男</Radio>
+							<Radio label="female">女</Radio>
+						</Radio-group>
+					</form-item>
+				</div>
+			</template>
+			<template>
+				<h4 class="title">输入业务信息</h4>
+				<div class="form">
+					<form-item label="业务名 :"><i-input v-model="presetData.businessInfo.business" placeholder="请输入业务名"></i-input></form-item>
+					<form-item label="是否邀请 :">
+						<Radio-group v-model="presetData.businessInfo.isInvite">
+							<Radio label="0">否</Radio>
+							<Radio label="1">是</Radio>
+						</Radio-group>
+					</form-item>
+				</div>
+				
+			</template>
+			<div style="margin: 30px auto; width: 70%; text-align: center; max-width: 500px;">
+				<i-button type="success" size="large" long @click="nextStep" :loading="submiting" v-cloak>{{ submiting ? '跳转中...' : '下一步' }}</i-button>
+			</div>
+		</i-form>
+    </div>
+
+  <script src="./polyfill.js"></script>
+  <!-- import Vue.js -->
+  <script src="https://vuejs.org/js/vue.min.js"></script>
+  <!-- import iView -->
+  <script src="https://unpkg.com/iview@3.5.4/dist/iview.min.js"></script>
+  <!-- import loadash -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  <script>
+	
+    var presetData = localStorage.getItem('H5PresetData');
+    presetData = presetData && presetData !== '' ? JSON.parse(presetData) : Object.create(null);
+	//默认设置信息
+	defaultPresetData = {
+		config: {
+			appId: '6BB0724D-096E-7747-A7F3-ECA72A078E03',
+			serverIp: 'dev.bairuitech.cn',
+			serverPort: '19003',
+			areaId: '63096973',
+			queneId:'111111',
+      roomId:'',
+		},
+		userInfo: {
+			sex:'male',
+			name:'张三',
+			userId:"432021333333333333"
+		},
+		businessInfo: {
+			business:'理财咨询',
+			isInvite:"0",
+		}
+	},
+
+	presetData = _.assign({}, defaultPresetData, presetData);
+
+    new Vue({
+      el: '#preset',
+      data: function () {
+        return {
+        	presetData: presetData,
+        	submiting: false,
+        	created: true
+        };
+      },
+
+      // 如果带有参数访问，则直接记录参数并跳转到首页
+      created: function () {
+        // var search = location.search;
+        // var queryMapper = {};
+        // var visitWithParams = false;
+
+        // if (search && /^\?.+/.test(search)) {
+        //   search
+        //     .slice(1)
+        //     .split('&')
+        //     .forEach(function (item) {
+        //       var key_value = item.split('=');
+        //       queryMapper[key_value[0]] = key_value[1];
+
+        //       if (key_value[0] === 'account') {
+        //         presetData.agentInfo.nickName = key_value[1];
+        //         presetData.agentInfo.strUserId = key_value[1];
+        //         visitWithParams = true;
+        //       }
+        //       if (key_value[0] === 'areaId') {
+        //         presetData.config.areaId = key_value[1];
+        //         visitWithParams = true;
+        //       }
+        //   });
+        // }
+
+        // if (visitWithParams) {
+        //   this.nextStep();
+        // } else {
+        //   this.created = true;
+        // }
+      },
+     
+      methods: {
+		//页面跳转
+        nextStep: function () {
+          var _this = this;
+          this.submiting = true;
+          localStorage.setItem('H5PresetData', JSON.stringify(this.presetData));
+          setTimeout(function () {
+            _this.submiting = false;
+            location.href = './index.html';
+          }, 300);
+        },
+    
+      }
+    });
+  </script>
+</body>
+</html>

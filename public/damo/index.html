@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H5组件damo</title>
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            /* color: #666;   */
+        }
+        html,body{
+            height: 100%;
+        }
+        #index{
+            height: 100%;
+        }
+        .h5-iframe{
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border: none;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="index">
+        <!-- 提供嵌入方式 -->
+        <iframe class="h5-iframe" src="../index.html" id="agentApp"></iframe>
+    </div>
+    <script>
+    // 集成调用实例
+    window.onload = function () {
+        var presetData = localStorage.getItem('H5PresetData');
+        presetData = presetData && presetData !== '' ? JSON.parse(presetData) : Object.create(null);
+    
+        // 初始化
+        var agentAppFrame = document.querySelector('#agentApp');
+        if (!agentAppFrame) return;
+        agentAppFrame = agentAppFrame.contentWindow;
+        if (!agentAppFrame) return;
+    
+        // 发送消息
+        function sendMessage (cmd, data) {
+        agentAppFrame.postMessage({ cmd: cmd, msg: data }, '*');
+        };
+    
+        sendMessage('CMDAnyChatAgentInit', { presetData: presetData });
+    
+        // 监听回调
+        window.addEventListener('message', function (event) {
+        var cmd = event.data.cmd;
+        var msg = event.data.msg;
+    
+        if (cmd === 'CMDAnyChatAgentInitDone') {
+            // TODO something
+        }
+    
+        // 视频通话开始回调
+        if (cmd === 'CMDAnyChatAgentVideoStart') {
+            document.querySelector('#servePage').style.display = 'none';
+            document.querySelector('#workPage').style.display = 'block';
+        }
+    
+        // 视频通话结束回调
+        if (cmd === 'CMDAnyChatAgentVideoEnd') {
+            document.querySelector('#servePage').style.display = 'block';
+            document.querySelector('#workPage').style.display = 'none';
+        }
+    
+        // 服务器端录制结束回调
+        if (cmd === 'CMDAnyChatAgentRecordDone') {
+            setTimeout(function () {
+            sendMessage('CMDAnyChatAgentRecordAddress', 'http://chrome.bairuitech.cn/file/2.mp4');
+            }, 3000);
+        }
+    
+        // 拍照回调
+        if (cmd === 'CMDAnyChatAgentSnapshot') {
+            var newWindow = window.open('');
+            newWindow.document.write('<img src="data:image/jpg;base64,' + msg + '">');
+            newWindow.document.title = '截图拍照输出demo';
+        }
+    
+        if (cmd === 'CMDAnyChatAgentSubmit') {
+            // TODO something
+            console.log(msg);
+        }
+        }, false);
+    }
+    </script>
+</body>
+</html>
