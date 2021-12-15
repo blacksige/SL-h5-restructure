@@ -1,0 +1,55 @@
+[v-cloak] {
+  display: none;
+}
+.call {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+}
+.call header {
+  height: 20px;
+  width: 100%;
+}
+.call main {
+  height: calc(100% - 120px);
+  width: 100%;
+}
+.call main .Client-Area {
+  height: 20%;
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.call main .Client-Area > #CLIENT-AREA {
+  height: 100%;
+}
+.call main .Client-Area > #CLIENT-AREA ::v-deep video {
+  height: 98%;
+}
+.call main .Agent-Area {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  left: 0px;
+  transform: translateY(-50%);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.call main .Agent-Area > #AGENT-AREA {
+  width: 100%;
+}
+.call main .Agent-Area > #AGENT-AREA ::v-deep video {
+  width: 100%;
+}
+.call footer {
+  height: 100px;
+  width: 100%;
+  line-height: 100px;
+}

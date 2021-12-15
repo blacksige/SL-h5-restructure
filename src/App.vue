@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <queue v-if="Step === 'queue'"></queue>
+    <queue v-if="Step === 'queue'" @updatedStep = "updatedStep"></queue>
     <call v-else-if="Step === 'call'"></call>
 
     <div v-else style="margin: 30px 0 0 0; color: #666;">
@@ -31,8 +31,17 @@ export default {
       businessInfo: JSON.parse(presetInfo).businessInfo
     };
   },
+  created() {
+    if (this.businessInfo.isInvite === '0') {
+      this.updatedStep(1);
+    } else {
+      this.updatedStep(2);
+    }
+  },
   mounted() {
-    // this.init();
+    window.onbeforeunload = () => {
+      this.$AnyChatH5SDK && this.$AnyChatH5SDK.logout();
+    };
   },
   methods: {
     updatedStep(step) {
@@ -63,9 +72,11 @@ export default {
 .el-message-box__wrapper{
   .el-message-box{
     width: auto;
+    min-width: 278px;
   }
 }
 body>.el-notification{
   width: 90%;
+  max-width: 400px;
 }
 </style>

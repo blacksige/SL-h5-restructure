@@ -47,7 +47,7 @@
 					<form-item label="服务器IP :"><i-input v-model="presetData.config.serverIp" placeholder="请输入服务器地址"></i-input></form-item>
 					<form-item label="服务器端口 :"><i-input v-model.number="presetData.config.serverPort" placeholder="请输入服务器端口"></i-input></form-item>
 					<form-item label="营业厅ID :"><i-input v-model.number="presetData.config.areaId" placeholder="请输入营业厅ID"></i-input></form-item>
-					<form-item label="队列ID :"><i-input v-model.number="presetData.config.queneId" placeholder="请输入队列ID"></i-input></form-item>
+					<form-item label="队列ID :"><i-input v-model.number="presetData.config.queueId" placeholder="请输入队列ID"></i-input></form-item>
           <form-item label="房间号 :" v-if="presetData.businessInfo.isInvite == '1'"><i-input v-model.number="presetData.config.roomId" placeholder="请输入房间号"></i-input></form-item>
 				</div>
 			</template>
@@ -55,7 +55,8 @@
 				<h4 class="title">输入用户信息</h4>
 				<div class="form">
 					<form-item label="用户名 :"><i-input v-model="presetData.userInfo.name" placeholder="请输入用户名"></i-input></form-item>
-					<form-item label="身份证ID :"><i-input v-model.number="presetData.userInfo.userId" placeholder="请输入身份证ID"></i-input></form-item>
+					<form-item label="手机号 :"><i-input v-model="presetData.userInfo.phone" placeholder="请输入手机号"></i-input></form-item>
+					<form-item label="账户ID :"><i-input v-model.number="presetData.userInfo.userId" placeholder="请输入账户ID"></i-input></form-item>
 					<form-item label="性别 :">
 						<Radio-group v-model="presetData.userInfo.sex">
 							<Radio label="male">男</Radio>
@@ -100,13 +101,14 @@
 			appId: '6BB0724D-096E-7747-A7F3-ECA72A078E03',
 			serverIp: 'dev.bairuitech.cn',
 			serverPort: '19003',
-			areaId: '63096973',
-			queneId:'111111',
-      roomId:'',
+			areaId: '1878841992',
+			queueId:'2111903886',
+      		roomId:'',
 		},
 		userInfo: {
 			sex:'male',
 			name:'张三',
+			phone:'13200000000',
 			userId:"432021333333333333"
 		},
 		businessInfo: {
@@ -129,35 +131,7 @@
 
       // 如果带有参数访问，则直接记录参数并跳转到首页
       created: function () {
-        // var search = location.search;
-        // var queryMapper = {};
-        // var visitWithParams = false;
 
-        // if (search && /^\?.+/.test(search)) {
-        //   search
-        //     .slice(1)
-        //     .split('&')
-        //     .forEach(function (item) {
-        //       var key_value = item.split('=');
-        //       queryMapper[key_value[0]] = key_value[1];
-
-        //       if (key_value[0] === 'account') {
-        //         presetData.agentInfo.nickName = key_value[1];
-        //         presetData.agentInfo.strUserId = key_value[1];
-        //         visitWithParams = true;
-        //       }
-        //       if (key_value[0] === 'areaId') {
-        //         presetData.config.areaId = key_value[1];
-        //         visitWithParams = true;
-        //       }
-        //   });
-        // }
-
-        // if (visitWithParams) {
-        //   this.nextStep();
-        // } else {
-        //   this.created = true;
-        // }
       },
      
       methods: {

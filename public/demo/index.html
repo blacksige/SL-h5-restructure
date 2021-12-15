@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H5组件damo</title>
+    <title>H5组件demo</title>
     <style>
         * {
             padding: 0px;
@@ -30,7 +30,7 @@
 <body>
     <div id="index">
         <!-- 提供嵌入方式 -->
-        <iframe class="h5-iframe" src="../index.html" id="agentApp"></iframe>
+        <iframe class="h5-iframe" src="../index.html" id="h5App"></iframe>
     </div>
     <script>
     // 集成调用实例
@@ -39,7 +39,7 @@
         presetData = presetData && presetData !== '' ? JSON.parse(presetData) : Object.create(null);
     
         // 初始化
-        var agentAppFrame = document.querySelector('#agentApp');
+        var agentAppFrame = document.querySelector('#h5App');
         if (!agentAppFrame) return;
         agentAppFrame = agentAppFrame.contentWindow;
         if (!agentAppFrame) return;
