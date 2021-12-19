@@ -1,3 +1,4 @@
+// 视频上下行速率组件
 <template>
   <div class="UpAndDown" v-cloak>
     <span>上行: {{upData}}KB/s</span>

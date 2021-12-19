@@ -8,7 +8,9 @@ export default new Vuex.Store({
     userid: -1, // 用户id
     agentid: 0, // 坐席id
     roomid: 0, // 房间号
-    userlist: [] // 房间内用户
+    friendList: [], // 房间其它用户
+    messTextList: [], // 文本信息
+    unread: 0
   },
   mutations: {
     setUserId (state, userid) {
@@ -20,8 +22,14 @@ export default new Vuex.Store({
     setRoomId (state, roomid) {
       state.roomid = roomid;
     },
-    setUserList (state, userlist) {
-      state.userlist = userlist;
+    setUserList (state, friendList) {
+      state.friendList = friendList;
+    },
+    setMessText (state, messText) {
+      state.messTextList.push(messText);
+    },
+    setUnread (state, unreadNum) {
+      state.unread = unreadNum;
     }
   },
   actions: {

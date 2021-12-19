@@ -73,10 +73,17 @@ export default {
   .el-message-box{
     width: auto;
     min-width: 278px;
+    .el-message-box__header{
+      text-align: center;
+    }
+    .el-message-box__btns {
+      text-align: center;
+    }
   }
 }
 body>.el-notification{
   width: 90%;
   max-width: 400px;
+  padding: 10px 20px 10px 9px;
 }
 </style>

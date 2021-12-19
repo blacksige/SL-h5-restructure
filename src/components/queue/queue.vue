@@ -28,7 +28,7 @@
 
 <script>
 import { TimeFormat } from '../toolkit';
-import { szUserStr } from '../config';
+import { szUserStr } from '../callParameter';
 let presetInfo = localStorage.getItem('H5PresetData');
 export default {
   name: 'Queue',
@@ -87,7 +87,8 @@ export default {
       this.$confirm('正在呼叫坐席, 是否结束并退出?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        showClose: false
       }).then(() => {
         setTimeout(() => {
           if (this.agentId) {
@@ -196,8 +197,11 @@ export default {
     onReceiveVideoCallRequest(data) {
       console.log(data, '接收视频呼叫请求通知');
     },
+    // 视频结束回调
     onReceiveVideoCallFinish(result, data) {
       this.timer ? clearInterval(this.timer) : this.timer = null;
+      this.$AnyChatH5SDK.leaveRoom();
+      this.$AnyChatH5SDK && this.$AnyChatH5SDK.logout();
       throw new Error(result.msg);
     },
     onReceiveVideoCallError(result, data) {

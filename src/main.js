@@ -9,7 +9,9 @@ import {
   MessageBox,
   Notification,
   Message,
-  Icon
+  Icon,
+  Badge,
+  Input
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
@@ -17,6 +19,8 @@ Vue.use(Button);
 Vue.use(Alert);
 Vue.use(Loading.directive);
 Vue.use(Icon);
+Vue.use(Badge);
+Vue.use(Input);
 
 Vue.prototype.$loading = Loading.service;
 Vue.prototype.$msgbox = MessageBox;
