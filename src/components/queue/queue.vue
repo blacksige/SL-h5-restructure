@@ -1,27 +1,21 @@
 <template>
     <div class="queue">
-      <div class="panel" v-if="!isLineUp">
-            <i class="el-icon-loading"></i>
+      <div class="panel" >
+            <img src="../../assets/slices/call-icon.png"  height="100px" width="100px"/>
+            <div class="lineUpTime">{{connectText === '正在进入队列' ? '' : setTime}}</div>
              <div class="waitText">
                 <div style="font-size: 16px;">
-                        正在进入营业厅队列，请稍候
-                </div>
-            </div>
-      </div>
-      <div class="panel" v-else>
-            <img src="../../assets/clock.png"/>
-            <div class="lineUpTime">{{setTime}}</div>
-             <div class="waitText">
-                <div style="font-size: 16px;">
-                        正在呼叫坐席，请稍后
-                        <div class="loadingSpan">
+                        {{connectText}}
+                        <div class="loadingSpan" >
                             <div class="typing_loader"></div>
                         </div>
                 </div>
             </div>
       </div>
       <div class="footer">
-            <el-button type="primary" round class="btnStyle" @click="exitLineUp">结束呼叫</el-button>
+            <van-button  class="btnStyle" @click="exitLineUp">
+              <img src="../../assets/slices/Hangup.png" height="74px" width="74px"/>
+            </van-button>
       </div>
     </div>
 </template>
@@ -40,9 +34,8 @@ export default {
       businessInfo: JSON.parse(presetInfo).businessInfo,
       agentId: null,
       timer: null,
-      isLineUp: false,
       isCall: false,
-
+      connectText: '正在进入队列',
       enterAreaReturnData: null,
       enterQueueReturnData: null,
       enterQueueProcessData: null
@@ -84,39 +77,32 @@ export default {
   methods: {
     // 退出
     exitLineUp() {
-      this.$confirm('正在呼叫坐席, 是否结束并退出?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        showClose: false
-      }).then(() => {
-        setTimeout(() => {
-          if (this.agentId) {
-            this.$AnyChatH5SDK.cancelVideoCall({
-              userId: this.agentId,
-              szUserStr: '' // 用户自定义参数
-            });
-          } else {
-            this.$AnyChatH5SDK.cancelQueuing({
-              done: (result) => {
-                this.$notify({
-                  title: '提示',
-                  message: result.code === 0 ? '已取消' : result.msg,
-                  type: 'success'
-                });
-              }
-            });
-          }
-          this.timer ? clearInterval(this.timer) : this.timer = null;
-          this.$AnyChatH5SDK && this.$AnyChatH5SDK.logout();
-          throw new Error('用户取消呼叫');
-        }, 300);
-      }).catch(() => {
-        this.$notify.info({
-          title: '提示',
-          message: '已取消'
+      this.$dialog.confirm({
+        title: '取消提示',
+        message: '正在呼叫专家，确认要取消呼叫吗？'
+      })
+        .then(() => {
+          setTimeout(() => {
+            if (this.agentId) {
+              this.$AnyChatH5SDK.cancelVideoCall({
+                userId: this.agentId,
+                szUserStr: '' // 用户自定义参数
+              });
+            } else {
+              this.$AnyChatH5SDK.cancelQueuing({
+                done: (result) => {
+                  this.$notify({ type: 'primary', message: result.code === 0 ? '取消成功' : result.msg });
+                }
+              });
+            }
+            this.timer ? clearInterval(this.timer) : this.timer = null;
+            this.$AnyChatH5SDK && this.$AnyChatH5SDK.logout();
+            this.$emit('onError', '用户取消呼叫');
+          }, 300);
+        })
+        .catch(() => {
+          this.$notify({ type: 'primary', message: '已取消' });
         });
-      });
     },
     // 开始排队
     LineUp() {
@@ -135,7 +121,7 @@ export default {
             this.enterAreaReturnData = data;
             this.enterQueue(this.configInfo.queueId);
           } else {
-            throw new Error('进入营业厅失败: ' + (result.code === 9 ? '营业厅不存在' : result.msg));
+            this.$emit('onError', result.msg);
           }
         }
       });
@@ -147,17 +133,17 @@ export default {
         done: (result, data) => {
           if (result.code === 0) {
             this.enterQueueReturnData = data;
-            this.isLineUp = true;
+            this.connectText = '在在呼叫专家，请稍后';
             this.LineUp();
           } else {
-            throw new Error('进入队列失败: ' + (result.code === 9 ? '队列不存在' : result.msg));
+            this.$emit('onError', result.msg);
           }
         },
         onProcessChanged: (result, data) => { // 排队状态变化回调
           if (result.code === 0) {
             this.enterQueueProcessData = data;
           } else {
-            throw new Error('进入队列失败: ' + (result.code === 9 ? '队列不存在' : result.msg));
+            this.$emit('onError', result.msg);
           }
         }
       });
@@ -173,15 +159,13 @@ export default {
             if (result.code === 0) {
               this.$store.commit('setAgentId', data.userId);
               this.agentId = data.userId;
-              console.log(data);
               this.isCall = true;
             } else {
-              this.$confirm(result.msg, '提示', {
-                confirmButtonText: '确定',
-                type: 'error',
-                showCancelButton: false
+              this.$dialog.alert({
+                title: '提示',
+                message: result.msg
               }).then(() => {
-                throw new Error(result.msg);
+                this.$emit('onError', result.msg);
               });
             }
           }
@@ -190,8 +174,8 @@ export default {
     },
     // 通话开始回调
     onReceiveVideoCallStart(data) {
-      console.log(data, 'data');
       this.$store.commit('setRoomId', data.roomId);
+      this.$emit('onVideoStart', '通话开始');
       this.$emit('updatedStep', 2);
     },
     onReceiveVideoCallRequest(data) {
@@ -202,13 +186,25 @@ export default {
       this.timer ? clearInterval(this.timer) : this.timer = null;
       this.$AnyChatH5SDK.leaveRoom();
       this.$AnyChatH5SDK && this.$AnyChatH5SDK.logout();
-      throw new Error(result.msg);
+      let second = 2;
+      let secondTimer = setInterval(() => {
+        if (second === 0) {
+          clearInterval(secondTimer);
+        }
+        this.$toast('当前视频通话已经结束，' + second + '秒后自动退出');
+        second--;
+      }, 1000);
+      this.$emit('onVideoEnd', '通话结束');
     },
     onReceiveVideoCallError(result, data) {
       console.log(result, data);
       if (result.code !== '9999') {
-        this.timer ? clearInterval(this.timer) : this.timer = null;
-        throw new Error(result.msg);
+        this.$dialog.alert({
+          message: result.msg
+        }).then(() => {
+          this.timer ? clearInterval(this.timer) : this.timer = null;
+          this.$emit('onError', result.msg);
+        });
       }
     }
   }

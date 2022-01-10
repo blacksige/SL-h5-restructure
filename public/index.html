@@ -11,6 +11,14 @@
     <script type="text/javascript" src="./sdk/anychatobject.js"></script>
     <script type="text/javascript" src="./sdk/anychatbase64.js"></script>
     <script type="text/javascript" src="./sdk/anychath5sdk.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+
+        eruda.init();
+        console.log('控制台打印信息');
+        console.log(navigator.mediaDevices);
+        
+    </script>
     <style>
       html,body{
         width: 100%;
@@ -83,6 +91,34 @@
       .circle {
         /* ...同上 */
         animation: circle 2s infinite;
+      }
+
+      /* ...提示框ui */
+      .van-dialog>.van-dialog__header{
+        font-size: 18px;
+      }
+      .van-dialog>.van-dialog__content>.van-dialog__message{
+        font-size: 15px;
+        font-weight: 400;
+        padding: 15px 24px;
+      }
+      .van-dialog>.van-hairline--top::after{
+        border: none;
+      }
+      .van-dialog>.van-dialog__footer>.van-dialog__cancel{
+        margin: 10px 25px 18px;
+        height: 34px;
+        background-color: transparent;
+        color: #BCBCBC;
+        border: 1px solid #BCBCBC;
+        border-radius: 3px;
+      } 
+      .van-dialog>.van-dialog__footer>.van-dialog__confirm{
+        margin: 10px 25px 18px;
+        height: 34px;
+        background-color: #EC662C;
+        color: white;
+        border-radius: 3px;
       }
     </style>
   </head>

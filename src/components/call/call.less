@@ -7,11 +7,11 @@
     background-color: black;
     
     header {
-        height: 20px;
+        height: 32px;
         width: 100%;
     }
     main {
-        height: calc(100% - 120px);
+        height: calc(100% - 132px); // 减去footer和header高度
         width: 100%;
         //model = 1 
         .Client-Area {
@@ -23,9 +23,9 @@
           }
           height: 18%;
           position: absolute;
-          top: 20px;
+          top: 32px;
           right: 0px;
-          z-index: 999;
+          z-index: 1000;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -80,6 +80,9 @@
     footer {
         height: 100px;
         width: 100%;
+        position: relative;
+        bottom: 0px;
+        z-index: 1000;
     }
 }
 .fourSides {

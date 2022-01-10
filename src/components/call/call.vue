@@ -2,6 +2,13 @@
     <div class="call" v-cloak>
         <header>
            <up-and-down></up-and-down>
+           <!-- <van-notice-bar
+            wrapable
+            :scrollable="false"
+            left-icon="volume-o"
+            style="font-size: 12px; padding: 4px 8px;"
+            text="在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。"
+          /> -->
         </header>
         <main>
             <template v-if="model === 'bothSides'">
@@ -27,19 +34,13 @@
               </div>
             </template>
             <template v-else-if="model === 'loading'">
-                <div
-                  v-loading="loading"
-                  style="width:100%;height:100%;font-size:30px"
-                  element-loading-text="拼命加载中"
-                  element-loading-spinner="el-icon-loading"
-                  element-loading-background="rgba(0, 0, 0, 0.8)">
-                </div>
+                <van-loading type="spinner" color="#1989fa" size="50" style="top: 49%"/>
             </template>
         </main>
         <footer>
           <interactive @microphoneHandel = 'microphoneHandel' @cameraHandel = 'cameraHandel' @clearUnread = 'clearUnread'></interactive>
         </footer>
-        <receive-buffer @updateModel="updateModel" @setVideoPos = 'setVideoPos'></receive-buffer>
+        <receive-buffer @updateModel="updateModel" @setVideoPos = 'setVideoPos' @deviceConfig = 'deviceConfig'></receive-buffer>
     </div>
 </template>
 
@@ -55,6 +56,7 @@ export default {
   name: 'Call',
   data () {
     return {
+      show: true,
       model: 'loading',
       isCVLoading: true,
       isAVLoading: true,
@@ -90,23 +92,17 @@ export default {
     };
 
     console.log(this.userid, this.agentid, this.roomid);
-
+    // function onSuccess(stream) {
+    //   console.log('已点击容许,开启成功');
+    // }
+    // function onError(error) {
+    //   console.log('错误：', error);
+    // }
+    // this.getUserMedia({ video: true, audio: true }, onSuccess.bind(this), onError.bind(this));
     this.microphone = this.$AnyChatH5SDK.getMicrophones()[0];
     this.camera = this.$AnyChatH5SDK.getCameras()[0];
-    try {
-      this.camera.config({
-        bitRate: 300000, // 视频编码码率设置（参数为int型，单位bps）
-        gop: 30, // 视频编码关键帧间隔控制（参数为int型）
-        width: 640, // 设置本地视频采集分辨率(宽度)
-        height: 480, // 设置本地视频采集分辨率(高度)
-        fps: 15, // 设置本地视频编码的帧率
-        recordBitRate: 0, // 设置录像视频码率  （参数为int型，单位bps）
-        preset: 3, // 设置视频编码预设参数（值越大，编码质量越高，占用CPU资源也会越高）
-        quality: 3 // 设置本地视频编码的质量
-      });
-    } catch (error) {
-      throw new Error('摄像头打开失败');
-    }
+    // 设备配置
+    this.deviceConfig();
     // 初始化房间回调
     this.setRoomOpt();
   },
@@ -123,6 +119,22 @@ export default {
         this.model = 'loading';
       }
     },
+    // getUserMedia(constraints, success, error) {
+    //   console.log(navigator.mediaDevices, navigator);
+    //   if (navigator.mediaDevices.getUserMedia) {
+    //     // 新版API
+    //     navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
+    //   } else if (navigator.webkitGetUserMedia) {
+    //     // webkit核心浏览器
+    //     navigator.webkitGetUserMedia(constraints, success, error);
+    //   } else if (navigator.mozGetUserMedia) {
+    //     // Firefox浏览器
+    //     navigator.mozGetUserMedia(constraints, success, error);
+    //   } else if (navigator.getUserMedia) {
+    //     // 旧版API
+    //     navigator.getUserMedia(constraints, success, error);
+    //   }
+    // },
     setRoomOpt() {
       // 定义房间配置对象roomOpt
       var roomOpt = {
@@ -140,32 +152,50 @@ export default {
         password: '',
         done: (result, data) => {
           if (result.code === 0) {
-            console.log(result, data);
             setTimeout(() => {
               this.userList = window.BRAC_GetOnlineUser();
               this.setVideoPos(this.userList);
             }, 500);
           } else {
-            this.$confirm(result.msg, '提示', {
-              confirmButtonText: '确定',
-              type: 'error',
-              showCancelButton: false
+            this.$dialog.alert({
+              message: result.msg
             }).then(() => {
-              throw new Error(result.msg);
+              this.$emit('onError', result.msg);
             });
           }
         }
       });
+    },
+    deviceConfig(data) {
+      try {
+        this.camera.config({
+          bitRate: data?.bit || 300000, // 视频编码码率设置（参数为int型，单位bps）
+          gop: 30, // 视频编码关键帧间隔控制（参数为int型）
+          width: data?.width || 640, // 设置本地视频采集分辨率(宽度)
+          height: data?.height || 480, // 设置本地视频采集分辨率(高度)
+          fps: data?.fps || 15, // 设置本地视频编码的帧率
+          recordBitRate: 0, // 设置录像视频码率  （参数为int型，单位bps）
+          preset: 3, // 设置视频编码预设参数（值越大，编码质量越高，占用CPU资源也会越高）
+          quality: 3 // 设置本地视频编码的质量
+        });
+        this.microphone.config({
+          vadctrl: 1, // 音频静音检测控制,（1打开(默认)，0关闭）
+          nsctrl: 1, // 音频噪音抑制控制,（1打开(默认)，0关闭）
+          echoctrl: 1, // 音频回音消除控制,（1打开(默认)，0关闭）
+          agcctrl: 1, // 音频自动增益控制,（1打开(默认)，0关闭）
+          capturemode: 0 // 音频采集模式设置（0 发言模式（默认），1 放歌模式，2 卡拉OK模式，3 线路输入模式）
+        });
+      } catch (error) {
+        this.$emit('onError', '摄像头打开失败');
+      }
     },
     // 房间事件回调
     onAnyChatUserAtRoom(data) {
       console.log(data, '用户进出房间通知事件');
       if (data.action === 0) {
         this.userList = this.userList.filter((item) => { return item !== data.userId; });
-        console.log(this.userList, '退出后的列表');
       } else if (data.action === 1) {
         this.userList.push(data.userId);
-        console.log(this.userList, '进入后的列表');
       }
       this.setVideoPos(this.userList);
     },
@@ -204,37 +234,35 @@ export default {
         // 双方通话
         this.updateModel(1);
         this.$nextTick(() => {
-          let errorCodeCamera = this.camera.open({
+          this.camera.open({
             id: 'CLIENT-AREA'
           });
-          let errorCodeMicrophone = this.microphone.open();
-          console.log(errorCodeCamera, errorCodeMicrophone, '打开摄像头与麦克风');
-          let errorCodeStream = this.$AnyChatH5SDK.getRemoteVideoStream({
+          this.microphone.open();
+          // 拉流
+          this.$AnyChatH5SDK.getRemoteVideoStream({
             remoteUserId: List[0],
             renderId: 'AGENT-AREA',
             streamIndex: 0
           });
-          let errorCodeMicroStream = this.$AnyChatH5SDK.getRemoteAudioStream({
+          this.$AnyChatH5SDK.getRemoteAudioStream({
             remoteUserId: List[0]
           });
-          console.log(errorCodeStream, errorCodeMicroStream, '打开摄像头与麦克风');
         });
       } else if (List.length > 1) {
         // 多方通话
         this.manySidesList = List.map(item => {
           return ('manySide' + item).toString();
         });
+        // 将本地视频divid添加到view列表渲染
         this.manySidesList.unshift(('manySide' + this.userid).toString());
-        console.log(this.manySidesList, '--id 列表');
         this.updateModel(2);
 
         this.$nextTick(() => {
           // 打开自己的摄像头与麦克风
-          let errorCodeCamera = this.camera.open({
+          this.camera.open({
             id: ('manySide' + this.userid).toString()
           });
-          let errorCodeMicrophone = this.microphone.open();
-          console.log(errorCodeCamera, errorCodeMicrophone, '打开摄像头与麦克风');
+          this.microphone.open();
           // 拉好友的流
           List.forEach(item => {
             this.$AnyChatH5SDK.getRemoteVideoStream({
@@ -251,11 +279,21 @@ export default {
     },
     // 开关麦克风---供子组件调用 opt = false 为关闭
     microphoneHandel(opt) {
-      opt ? this.microphone.open() : this.microphone.close();
+      opt ? window.BRAC_UserSpeakControl(-1, 1) : window.BRAC_UserSpeakControl(-1, 0);
     },
     // 开关摄像头---供子组件调用 opt = false 为关闭
     cameraHandel(opt) {
-      opt ? this.camera.open() : this.camera.close();
+      if (this.friendList.length === 1) {
+        // opt ? this.camera.open({ id: 'CLIENT-AREA' }) : this.camera.close();
+        if (opt) {
+          window.BRAC_UserCameraControlEx(-1, 1, 0, 0, '');
+          window.BRAC_SetVideoPos(-1, document.getElementById('CLIENT-AREA'), 'me-video');
+        } else {
+          window.BRAC_UserCameraControlEx(-1, 0, 0, 0, '');
+        }
+      } else {
+        opt ? this.camera.open({ id: ('manySide' + this.userid).toString() }) : this.camera.close();
+      }
     },
     // 清除未读信息
     clearUnread() {

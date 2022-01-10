@@ -49,44 +49,34 @@
         agentAppFrame.postMessage({ cmd: cmd, msg: data }, '*');
         };
     
-        sendMessage('CMDAnyChatAgentInit', { presetData: presetData });
+        sendMessage('CMDAnyChatH5Init', { presetData: presetData });
     
         // 监听回调
         window.addEventListener('message', function (event) {
         var cmd = event.data.cmd;
         var msg = event.data.msg;
     
-        if (cmd === 'CMDAnyChatAgentInitDone') {
+        if (cmd === 'CMDAnyChatH5InitDone') {
             // TODO something
+            console.log(msg);
         }
-    
+
         // 视频通话开始回调
-        if (cmd === 'CMDAnyChatAgentVideoStart') {
-            document.querySelector('#servePage').style.display = 'none';
-            document.querySelector('#workPage').style.display = 'block';
+        if (cmd === 'CMDAnyChatH5VideoStart') {
+            console.log(msg);
         }
     
         // 视频通话结束回调
-        if (cmd === 'CMDAnyChatAgentVideoEnd') {
-            document.querySelector('#servePage').style.display = 'block';
-            document.querySelector('#workPage').style.display = 'none';
+        if (cmd === 'CMDAnyChatH5VideoEnd') {
+            console.log(msg);
         }
-    
-        // 服务器端录制结束回调
-        if (cmd === 'CMDAnyChatAgentRecordDone') {
-            setTimeout(function () {
-            sendMessage('CMDAnyChatAgentRecordAddress', 'http://chrome.bairuitech.cn/file/2.mp4');
-            }, 3000);
+
+        // 视频通话结束回调
+        if (cmd === 'CMDAnyChatH5Error') {
+            console.log(msg);
         }
-    
-        // 拍照回调
-        if (cmd === 'CMDAnyChatAgentSnapshot') {
-            var newWindow = window.open('');
-            newWindow.document.write('<img src="data:image/jpg;base64,' + msg + '">');
-            newWindow.document.title = '截图拍照输出demo';
-        }
-    
-        if (cmd === 'CMDAnyChatAgentSubmit') {
+
+        if (cmd === 'CMDAnyChatH5Submit') {
             // TODO something
             console.log(msg);
         }

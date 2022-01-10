@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <queue v-if="Step === 'queue'" @updatedStep = "updatedStep"></queue>
-    <call v-else-if="Step === 'call'"></call>
+    <queue v-if="Step === 'queue'" @updatedStep = "updatedStep" @onVideoStart = "onVideoStart" @onVideoEnd = "onVideoEnd" @onError = "onError"></queue>
+    <call v-else-if="Step === 'call'"  @onError = "onError"></call>
 
     <div v-else style="margin: 30px 0 0 0; color: #666;">
       <img src="./assets/404.png" alt="" style="width: 200px;height: 200px;">
@@ -25,7 +25,6 @@ export default {
   data() {
     return {
       Step: 'queue',
-      connectTitle: '登录成功',
       config: JSON.parse(presetInfo).config,
       userInfo: JSON.parse(presetInfo).userInfo,
       businessInfo: JSON.parse(presetInfo).businessInfo
@@ -52,6 +51,24 @@ export default {
       } else {
         this.Step = '';
       }
+    },
+    // 事件提交
+    // 视频开始
+    onVideoStart (params) {
+      this.$emit('onVideoStart', params);
+    },
+    // 视频结束
+    onVideoEnd (params) {
+      this.$emit('onVideoEnd', params);
+    },
+    // 数据提交
+    onSubmit (data) {
+      const dataSet = data;
+      this.$emit('onSubmit', dataSet);
+    },
+    // 错误提交
+    onError (err) {
+      this.$emit('onError', err);
     }
   }
 };
@@ -64,26 +81,15 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100%;
+  background-color: #F2F1F1;
   width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
-
-//element全局样式
-.el-message-box__wrapper{
-  .el-message-box{
-    width: auto;
-    min-width: 278px;
-    .el-message-box__header{
-      text-align: center;
-    }
-    .el-message-box__btns {
-      text-align: center;
-    }
-  }
+.van-pull-refresh{
+  overflow: unset !important;
 }
-body>.el-notification{
-  width: 90%;
-  max-width: 400px;
-  padding: 10px 20px 10px 9px;
+.van-dialog--round-button .van-dialog__message{
+  font-size: 17px;
 }
 </style>

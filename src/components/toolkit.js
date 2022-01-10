@@ -15,7 +15,7 @@ function current() {
   // str += d.getDate() + '日';
   str += d.getHours() + ':';
   str += d.getMinutes() + ':';
-  str += d.getSeconds() + ':';
+  str += d.getSeconds();
   return str;
 }
 export { TimeFormat, current };

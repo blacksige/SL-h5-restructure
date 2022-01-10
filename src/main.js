@@ -2,37 +2,26 @@ import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
 import { messageEventsRegister } from './messageEvents';
-import {
-  Loading,
-  Button,
-  Alert,
-  MessageBox,
-  Notification,
-  Message,
-  Icon,
-  Badge,
-  Input
-} from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import { Button, Icon, Popup, Toast, Dialog, Loading, Notify, Overlay, Badge, NoticeBar, Field } from 'vant';
+import 'vant/lib/index.css';
 
+Vue.use(Field);
 Vue.use(Button);
-Vue.use(Alert);
-Vue.use(Loading.directive);
 Vue.use(Icon);
+Vue.use(Popup);
+Vue.use(Toast);
+Vue.use(Dialog);
+Vue.use(Loading);
+Vue.use(Notify);
+Vue.use(Overlay);
 Vue.use(Badge);
-Vue.use(Input);
+Vue.use(NoticeBar);
 
-Vue.prototype.$loading = Loading.service;
-Vue.prototype.$msgbox = MessageBox;
-Vue.prototype.$alert = MessageBox.alert;
-Vue.prototype.$confirm = MessageBox.confirm;
-Vue.prototype.$prompt = MessageBox.prompt;
-Vue.prototype.$notify = Notification;
-Vue.prototype.$message = Message;
+// import Vant from 'vant';
 
-Vue.config.productionTip = false;
+// Vue.use(Vant);
 
-class AnyChatAgent {
+class AnyChatH5 {
   #el = '#app';
   #opt;
   #events;
@@ -46,7 +35,6 @@ class AnyChatAgent {
     }
     this.#opt = opt;
     this.#events = events;
-    console.log(this.#opt);
   }
 
   // 初始化
@@ -60,9 +48,8 @@ class AnyChatAgent {
         nickName: this.#opt.businessInfo.isInvite === '0' ? this.#opt.userInfo.name : '游客', // 兼容密码登录方式，BRAC_Login使用的是nickName
         strUserId: this.#opt.userInfo?.userId || this.#opt.userInfo?.phone,
         onLogin: (data) => {
-          // 保存坐席必要信息，去掉私隐内容
+          // 保存用户必要信息，去掉私隐内容
           store.commit('setUserId', data.userId);
-          console.log(data.userId);
           setTimeout(() => {
             resolve();
           }, 1000);
@@ -81,7 +68,6 @@ class AnyChatAgent {
       };
 
       this.#sdkInstance = window.AnyChatH5SDK.sdkInit(initOpt);
-      console.log(this.#opt);
     })
       .then(this.#createVueApp)
       .then(vueApp => {
@@ -121,7 +107,7 @@ class AnyChatAgent {
   }
 };
 
-window.AnyChatAgent = AnyChatAgent;
+window.AnyChatH5 = AnyChatH5;
 
 // 注册message事件
 messageEventsRegister();

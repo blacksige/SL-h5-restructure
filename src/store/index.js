@@ -10,7 +10,7 @@ export default new Vuex.Store({
     roomid: 0, // 房间号
     friendList: [], // 房间其它用户
     messTextList: [], // 文本信息
-    unread: 0
+    unread: 0 // 未读信息数
   },
   mutations: {
     setUserId (state, userid) {

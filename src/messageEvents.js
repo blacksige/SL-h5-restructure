@@ -2,54 +2,35 @@ let agentApp = null;
 
 const events = {
   // 初始化
-  CMDAnyChatAgentInit (data) {
-    agentApp = new window.AnyChatAgent(
+  CMDAnyChatH5Init (data) {
+    agentApp = new window.AnyChatH5(
       data.presetData,
       {
         // 视频开始
         onVideoStart (params) {
-          sendMessage('CMDAnyChatAgentVideoStart', params);
+          sendMessage('CMDAnyChatH5VideoStart', params);
         },
         // 视频结束
         onVideoEnd (params) {
-          sendMessage('CMDAnyChatAgentVideoEnd', params);
-        },
-        // 录像结束
-        onRecordDone (params) {
-          sendMessage('CMDAnyChatAgentRecordDone', params);
-        },
-        // 截图拍照
-        onSnapShot (image) {
-          sendMessage('CMDAnyChatAgentSnapshot', image);
+          sendMessage('CMDAnyChatH5VideoEnd', params);
         },
         // 输出提交
         onSubmit (output) {
-          sendMessage('CMDAnyChatAgentSubmit', output);
+          sendMessage('CMDAnyChatH5Submit', output);
+        },
+        // 异常中断提交
+        onError (err) {
+          sendMessage('CMDAnyChatH5Error', err);
         }
       }
     );
 
     agentApp.init().then(() => {
-      sendMessage('CMDAnyChatAgentInitDone');
+      sendMessage('CMDAnyChatH5InitDone');
     });
-  },
-
-  // 订阅服务端录制回放文件地址
-  CMDAnyChatAgentRecordAddress (path) {
-    agentApp.updateRecordFilePath(path);
-  },
-
-  // 订阅输出
-  CMDAnyChatAgentRequestSubmit () {
-    agentApp.getSubmitData();
   }
 
-  // 更新坐席状态
-  // CMDAnyChatAgentUpdateStatus (data) {
-  //   agentApp.setAgentState(data.status);
-  // }
 };
-console.log('123');
 // 收到message消息，根据消息指令进行对应处理
 const receiveMessage = event => {
   const cmd = event?.data?.cmd;

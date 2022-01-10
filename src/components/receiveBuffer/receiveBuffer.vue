@@ -1,4 +1,4 @@
-// 接收透明通道
+<!--接收透明通道-->
 <template>
   <div>
   </div>
@@ -55,12 +55,11 @@ export default {
           if (data.msg.data.status === 0) {
             this.$emit('updateModel', 3);
             this.$nextTick(() => {
-              let errorCodeCamera = this.$AnyChatH5SDK.getRemoteVideoStream({
+              this.$AnyChatH5SDK.getRemoteVideoStream({
                 remoteUserId: data.userId,
                 renderId: 'SHARE',
                 streamIndex: data.msg.data.streamIndex
               });
-              console.log(errorCodeCamera, '切换流结果');
             });
           } else {
             this.$AnyChatH5SDK.cancelRemoteVideoStream({
@@ -78,12 +77,11 @@ export default {
         case this.cmdObj.rbShareDocument:
           this.$emit('updateModel', 3);
           this.$nextTick(() => {
-            let errorCodeCamera = this.$AnyChatH5SDK.getRemoteVideoStream({
+            this.$AnyChatH5SDK.getRemoteVideoStream({
               remoteUserId: data.userId,
               renderId: 'SHARE',
               streamIndex: data.msg.data.streamIndex
             });
-            console.log(errorCodeCamera, '切换流结果');
           });
           break;
         // 关闭屏幕共享
@@ -98,7 +96,10 @@ export default {
           });
           this.$emit('setVideoPos', this.friendList);
           break;
-
+        // 设置清晰度
+        case this.cmdObj.rbSetDefinition:
+          this.$emit('deviceConfig', data.msg.data);
+          break;
         default:
           break;
       }

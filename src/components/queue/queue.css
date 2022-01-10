@@ -7,12 +7,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #F0F0F0;
+  color: white;
+  background: url(../../assets/slices/quene-bg.png);
+  background-size: cover;
 }
 .queue .panel {
-  background-color: #fff;
   border-radius: 8px;
-  height: 60%;
+  height: 50%;
   width: 90%;
   display: flex;
   flex-direction: column;
@@ -25,22 +26,22 @@
   color: #028aff;
 }
 .queue .panel > img {
-  width: 128px;
-  height: 128px;
   color: #028aff;
 }
 .queue .panel .lineUpTime {
   font-size: 32px;
 }
 .queue .footer {
-  width: 90%;
-  border-radius: 0px;
+  border-radius: 50%;
   /* position: relative; */
-  position: relative;
-  top: 80px;
+  margin-top: 40%;
 }
 .queue .footer .btnStyle {
-  width: 100%;
+  width: 72px;
+  height: 72px;
+  border: none;
+  background-color: transparent;
+  border-radius: 50%;
 }
 .loadingSpan {
   width: 60px;

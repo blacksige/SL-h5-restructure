@@ -3242,7 +3242,6 @@
 
 	//客户收到坐席准备好
 	function OnAnyChatAgentprepared(dwAgentId, clientId, dwQueueId) {
-		console.log('test');
 	    var agentStrUserId = getStrUserId(dwAgentId);
 	    var clientStrUserId = getStrUserId(clientId);
 	    var data = {
