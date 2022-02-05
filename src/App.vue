@@ -1,80 +1,94 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <queue v-if="Step === 'queue'" @updatedStep = "updatedStep" @onVideoStart = "onVideoStart" @onVideoEnd = "onVideoEnd" @onError = "onError"></queue>
-    <call v-else-if="Step === 'call'"  @onError = "onError"></call>
-
-    <div v-else style="margin: 30px 0 0 0; color: #666;">
-      <img src="./assets/404.png" alt="" style="width: 200px;height: 200px;">
-      <h4>页面已丢失</h4>
-    </div>
+    <top-nav-bar :isExit="isExit" :navbarTitle="barTitle" v-if="barTitle !== 'CallIndex'"></top-nav-bar>
+      <router-view/>
   </div>
 </template>
 
 <script>
-import Queue from './components/queue/queue.vue';
-import Call from './components/call/call.vue';
-
-let presetInfo = localStorage.getItem('H5PresetData');
+import TopNavBar from './components/TopNavBar.vue';
+import { mapState, mapMutations } from 'vuex';
+import apiHandel from './api/apiHandel';
 export default {
   name: 'App',
   components: {
-    Queue,
-    Call
+    TopNavBar
   },
   data() {
     return {
-      Step: 'queue',
-      config: JSON.parse(presetInfo).config,
-      userInfo: JSON.parse(presetInfo).userInfo,
-      businessInfo: JSON.parse(presetInfo).businessInfo
+      isExit: true
     };
   },
-  created() {
-    if (this.businessInfo.isInvite === '0') {
-      this.updatedStep(1);
-    } else {
-      this.updatedStep(2);
+  watch: {
+    '$route.path': function (newVal, oldVal) {
+      if (newVal === '/') {
+        this.isExit = true;
+      } else {
+        this.isExit = false;
+      }
     }
   },
-  mounted() {
-    window.onbeforeunload = () => {
-      this.$AnyChatH5SDK && this.$AnyChatH5SDK.logout();
-    };
+  computed: {
+    ...mapState(['barTitle'])
+  },
+  created() {
+    if (localStorage.getItem('SEXList') && localStorage.getItem('ORDER_STATUSList') &&
+    localStorage.getItem('PAY_STATUSList') && localStorage.getItem('COMMENT_STATUSList')) {
+    } else {
+      this.getDict();
+    }
+    this.getConfig();
   },
   methods: {
-    updatedStep(step) {
-      if (step === 1) {
-        this.Step = 'queue';
-      } else if (step === 2) {
-        this.Step = 'call';
-      } else {
-        this.Step = '';
-      }
+    ...mapMutations(['updateAppId', 'updateanychatIp', 'updateAnychatPort']),
+    getDict() {
+      let prarms;
+      let arr = ['SEX', 'ORDER_STATUS', 'PAY_STATUS', 'COMMENT_STATUS']; // 字典code
+      arr.forEach(item => {
+        prarms = {
+          typeCode: item
+        };
+        apiHandel.getDictInfoListByTypeCode(prarms).then(res => {
+          let arr = JSON.stringify(res);
+          switch (item) {
+            case 'SEX':
+              localStorage.setItem('SEXList', arr);
+              break;
+            case 'ORDER_STATUS':
+              localStorage.setItem('ORDER_STATUSList', arr);
+              break;
+            case 'PAY_STATUS':
+              localStorage.setItem('PAY_STATUSList', arr);
+              break;
+            case 'COMMENT_STATUS':
+              localStorage.setItem('COMMENT_STATUSList', arr);
+              break;
+            default:
+              break;
+          }
+        });
+      });
     },
-    // 事件提交
-    // 视频开始
-    onVideoStart (params) {
-      this.$emit('onVideoStart', params);
-    },
-    // 视频结束
-    onVideoEnd (params) {
-      this.$emit('onVideoEnd', params);
-    },
-    // 数据提交
-    onSubmit (data) {
-      const dataSet = data;
-      this.$emit('onSubmit', dataSet);
-    },
-    // 错误提交
-    onError (err) {
-      this.$emit('onError', err);
+    getConfig() {
+      apiHandel.getConfig().then(res => {
+        console.log(res);
+        res.content.content.forEach(item => {
+          if (item.configKey === 'ANYCHAT_AGENT_IP') {
+            this.updateanychatIp(item.configValue);
+          } else if (item.configKey === 'ANYCHAT_AGENT_PORT_H5') {
+            this.updateAnychatPort(JSON.parse(item.configValue));
+          } else if (item.configKey === 'BUSINESS_APP_ID') {
+            this.updateAppId(item.configValue);
+          }
+        });
+      });
     }
   }
 };
 </script>
 
 <style lang="less">
+@defaultsColor:#EC662B;
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -91,5 +105,8 @@ export default {
 }
 .van-dialog--round-button .van-dialog__message{
   font-size: 17px;
+}
+[v-cloak] {
+  display: none;
 }
 </style>

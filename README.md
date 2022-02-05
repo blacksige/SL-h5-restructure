@@ -1,4 +1,4 @@
-# h5component
+# h5
 
 ## Project setup
 ```

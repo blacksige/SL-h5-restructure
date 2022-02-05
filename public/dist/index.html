@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="favicon.ico"><title>h5component</title><script src="./sdk/anychatsdk.js"></script><script src="./sdk/anychat4html5.js"></script><script src="./sdk/anychatobject.js"></script><script src="./sdk/anychatbase64.js"></script><script src="./sdk/anychath5sdk.js"></script><style>html,body{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+      }
+      #loading{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 2000;
+        background-color: rgba(0, 0, 0, 0.8);
+        margin: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transition: opacity .3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #loading>.text{
+        color: #409EFF;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      .box {
+        height: 100px;
+        width: 100px;
+        background: transparent;
+        
+      }
+      .box .circle {
+        stroke-width: 2;
+        stroke: #409eff;
+        stroke-linecap: round;
+      }
+      /* 旋转动画 */
+      @keyframes rotate {
+          to {
+              transform: rotate(1turn)
+          }
+      }
+      /* 弧线动画 */
+      /* 125 是圆的周长 */
+      @keyframes circle {
+          0% {
+      /* 状态1: 点 */
+              stroke-dasharray: 1 125;
+              stroke-dashoffset: 0;
+          }
+          50% {
+      /* 状态2: 圆 */
+              stroke-dasharray: 120, 125;
+              stroke-dashoffset: 0;
+          }
+          to {
+      /* 状态3: 点（向旋转的方向收缩） */
+              stroke-dasharray: 120 125;
+              stroke-dashoffset: -125px;
+          }
+      }
+      .box {
+        /* ...同上 */
+        animation: rotate 2s linear infinite;
+      }
+      .circle {
+        /* ...同上 */
+        animation: circle 2s infinite;
+      }
+
+      /* ...提示框ui */
+      .van-dialog>.van-dialog__header{
+        font-size: 18px;
+      }
+      .van-dialog>.van-dialog__content>.van-dialog__message{
+        font-size: 15px;
+        font-weight: 400;
+        padding: 15px 24px;
+      }
+      .van-dialog>.van-hairline--top::after{
+        border: none;
+      }
+      .van-dialog>.van-dialog__footer{
+        margin: 10px;
+      }
+      .van-dialog--round-button .van-dialog__footer{
+        padding: 0 !important;
+      }
+      .van-dialog>.van-dialog__footer>.van-dialog__cancel{
+        margin: 10px;
+        height: 40px;
+        background-color: transparent;
+        color: #333;
+        border: 1px solid #BCBCBC;
+        border-radius: 3px;
+      } 
+      .van-dialog>.van-dialog__footer>.van-dialog__confirm{
+        margin: 10px;
+        height: 40px;
+        background-color: #EC662C;
+        color: white;
+        border-radius: 3px;
+      }</style><link href="css/app.93f05414.css" rel="preload" as="style"><link href="css/chunk-vendors.2090ac88.css" rel="preload" as="style"><link href="js/app.3709ce5d.js" rel="preload" as="script"><link href="js/chunk-vendors.27d0a430.js" rel="preload" as="script"><link href="css/chunk-vendors.2090ac88.css" rel="stylesheet"><link href="css/app.93f05414.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but h5component doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"><div id="loading"><svg viewBox="25 25 50 50" class="box"><circle cx="50" cy="50" r="20" fill="none" class="circle"></circle></svg><div class="text">正在初始化</div></div></div><script src="js/chunk-vendors.27d0a430.js"></script><script src="js/app.3709ce5d.js"></script></body></html>

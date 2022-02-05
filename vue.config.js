@@ -1,27 +1,13 @@
-const webpack = require('webpack');
-
+// const path = require('path')
 module.exports = {
   publicPath: './',
-  css: {
-    loaderOptions: {
-      less: {
-        javascriptEnabled: true
+  devServer: {
+    proxy: {
+      '/*': {
+        target: 'http://192.168.8.110:18006',
+        changeOrigin: true// 允许websockets跨域
+        // ws: true,
       }
-    }
-  },
-  configureWebpack: {
-    devtool: 'source-map',
-    plugins: [
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-    ]
-  },
-  chainWebpack: config => {
-    config.module
-      .rule('images')
-      .use('url-loader')
-      .tap(options => {
-        options.limit = 8192;
-        return options;
-      });
+    } // 代理转发配置，用于调试环境
   }
 };

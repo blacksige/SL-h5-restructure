@@ -5,31 +5,37 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    userid: -1, // 用户id
-    agentid: 0, // 坐席id
-    roomid: 0, // 房间号
-    friendList: [], // 房间其它用户
-    messTextList: [], // 文本信息
-    unread: 0 // 未读信息数
+    barTitle: '', // 导航标题
+    activeVal: '', // 首页激活内容缓存
+    orderCache: {}, // 订单数据缓存
+    userId: 2, // 用户id
+
+    // 系统配置相关
+    appId: 'CE8400FB-D755-BE42-8E91-B35EDD5E4CB4',
+    anychatIp: 'dev.bairuitech.cn',
+    anychatPort: 19003
   },
   mutations: {
-    setUserId (state, userid) {
-      state.userid = userid;
+    updateTitle(state, barTitle) {
+      state.barTitle = barTitle;
     },
-    setAgentId (state, agentid) {
-      state.agentid = agentid;
+    updateActiveVal(state, activeVal) {
+      state.activeVal = activeVal;
     },
-    setRoomId (state, roomid) {
-      state.roomid = roomid;
+    updateUserId(state, userId) {
+      state.userId = userId;
     },
-    setUserList (state, friendList) {
-      state.friendList = friendList;
+    updateAppId(state, appId) {
+      state.appId = appId;
     },
-    setMessText (state, messText) {
-      state.messTextList.push(messText);
+    updateanychatIp(state, anychatIp) {
+      state.anychatIp = anychatIp;
     },
-    setUnread (state, unreadNum) {
-      state.unread = unreadNum;
+    updateAnychatPort(state, anychatPort) {
+      state.anychatPort = anychatPort;
+    },
+    updateOrderCache(state, obj) {
+      state.orderCache = obj;
     }
   },
   actions: {
